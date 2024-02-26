@@ -69,22 +69,28 @@ def vacancies_old_save(text):
 
 def vacancies_old_load():
     with open('last_vacancies.txt', 'r', encoding='utf-8') as f:
-        data = json.load(f)
-    return data
+        try:
+            data = json.load(f)
+        except json.decoder.JSONDecodeError:
+            return None
+        return data
 
 
 def main():
     get_data()
     parsed_vacancies = parse_the_answer()
-    for item in parsed_vacancies:
-        if item not in vacancies_old_load():
-            text_to_send = f'Название: {item["Название"]}\nЗП: {item["ЗП"]}\nСсылка: {item["Ссылка"]}\n'
-            print(text_to_send)
-            send_msg(os.environ.get('TOKEN'), os.environ.get('CHAT_ID'), text_to_send)
-        else:
-            continue
+    old_vacancies = vacancies_old_load()
+    if old_vacancies is None:
+        print('Нет старых данных')
+    else:
+        for item in parsed_vacancies:
+            if item not in old_vacancies:
+                text_to_send = f'Название: {item["Название"]}\nЗП: {item["ЗП"]}\nСсылка: {item["Ссылка"]}\n'
+                print(text_to_send)
+                send_msg(os.environ.get('TOKEN'), os.environ.get('CHAT_ID'), text_to_send)
+            else:
+                continue
     vacancies_old_save(parsed_vacancies)
-    #send_msg(os.environ.get('TOKEN'), os.environ.get('CHAT_ID'), 'Тестовое сообщение')
 
 
 if __name__ == "__main__":
