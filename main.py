@@ -39,14 +39,14 @@ def get_data():
 def parse_the_answer():
     result_summary = []
     result = {}
+    salary_list = {}
     with open('last_results.txt', 'r', encoding='utf-8') as f:
         data = json.load(f)
     for item in data['items']:
         if item['archived']:
             continue
-        salary_list = {}
         result['Название'] = item['name']
-        result['Ссылка'] = item['url']
+        result['Ссылка'] = item['alternate_url']
         salary_list = item['salary']
         if salary_list is None:
             continue
@@ -57,15 +57,14 @@ def parse_the_answer():
                 salary_list['to'] = "не указано"
             if salary_list['currency'] is None:
                 salary_list['currency'] = ""
-
             result["ЗП"] = f'{salary_list["from"]} - {salary_list["to"]} ({salary_list["currency"]})'
-        result_summary.append(result)
+        result_summary.append(result.copy())
     return result_summary
 
 
-def vacancies_old_save():
+def vacancies_old_save(text):
     with open('last_vacancies.txt', 'w', encoding='utf-8') as f:
-        f.write(json.dumps(parse_the_answer(), ensure_ascii=False).encode('utf-8').decode())
+        f.write(json.dumps(text, ensure_ascii=False).encode('utf-8').decode())
 
 
 def vacancies_old_load():
@@ -76,17 +75,15 @@ def vacancies_old_load():
 
 def main():
     get_data()
-    for item in parse_the_answer():
-        print(item)
+    parsed_vacancies = parse_the_answer()
+    for item in parsed_vacancies:
         if item not in vacancies_old_load():
-            print(item)
             text_to_send = f'Название: {item["Название"]}\nЗП: {item["ЗП"]}\nСсылка: {item["Ссылка"]}\n'
             print(text_to_send)
             send_msg(os.environ.get('TOKEN'), os.environ.get('CHAT_ID'), text_to_send)
         else:
-            print('Такая вакансия уже была')
             continue
-    vacancies_old_save()
+    vacancies_old_save(parsed_vacancies)
     #send_msg(os.environ.get('TOKEN'), os.environ.get('CHAT_ID'), 'Тестовое сообщение')
 
 
