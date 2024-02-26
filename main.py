@@ -2,14 +2,15 @@ import requests
 import time
 import json
 import os
+from config import Text, Area, Per_page
 
 
 def get_page(page):
     params = {
-        'text': 'Python developer',
-        'area': 1,
+        'text': Text,
+        'area': Area,
         'page': page,
-        'per_page': 10
+        'per_page': Per_page
     }
 
     url = 'https://api.hh.ru/vacancies'
