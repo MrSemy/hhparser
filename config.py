@@ -1,6 +1,7 @@
 # parameters of request #
 
-Text = 'Python developer'
-Area = 1
-Per_page = 10
+Text = 'Python разработчик'
+Area = 113
+Id_of_shed = 'remote'
+Per_page = 100
 Numbers_of_pages_to_parse = 0  # начинается с нуля

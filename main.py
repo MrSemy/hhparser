@@ -4,7 +4,7 @@ import json
 import os
 import dotenv
 from tele import send_msg
-from config import Text, Area, Per_page
+from config import Text, Area, Per_page, Id_of_shed
 
 
 dotenv.load_dotenv()
@@ -15,7 +15,8 @@ def get_page(page):
         'text': Text,
         'area': Area,
         'page': page,
-        'per_page': Per_page
+        'per_page': Per_page,
+        'schedule': Id_of_shed
     }
 
     url = 'https://api.hh.ru/vacancies'
